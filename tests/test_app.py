@@ -30,3 +30,14 @@ def test_auth_and_record():
 
 def test_records_require_auth():
     assert client.get("/records").status_code == 401
+
+
+def test_dashboard_exposes_telegram_search():
+    response = client.get("/")
+    assert response.status_code == 200
+    assert "telegramQuery" in response.text
+    assert "Search and import" in response.text
+
+def test_telegram_search_requires_auth():
+    response = client.post("/telegram/search", json={"query": "public test", "limit": 5})
+    assert response.status_code == 401
